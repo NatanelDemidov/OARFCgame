@@ -1,22 +1,56 @@
 using System.Net;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
-    Vector3 dir;
-    [SerializeField] int speed = 20;
-    Rigidbody rb;
-    float mouseX;
-    [SerializeField] Vector3 scale;
-    Animator animator;
+    [Header("CameraRotation")]
     float mouseY;
+    float mouseX;
+    [SerializeField] Camera cam;
     Vector3 rotDir;
     [SerializeField] int rotSpeed;
-    [SerializeField] Camera cam;
+
+
+    [Header("Movement")]
+    Vector3 dir;
+    [SerializeField] int speed = 20;
+    [SerializeField] int jumpForce;
+
+
+    [Header("Misc")]
+    Rigidbody rb;
+    [SerializeField] Vector3 scale;
+
+
+    [Header("Animation")]
+    Animator animator;
+    int walkState = 0;
+
+
+    [Header("Camcorder")]
+    [SerializeField] GameObject flashLight;
+    [SerializeField] AudioSource nightVisionSound;
+    float timeSpent;
+    [SerializeField] GameObject camPanel;
+    [SerializeField] Image camPanelIMG;
+    [SerializeField] Color nightVisionColor;
+    [SerializeField] Color regularVisionColor;
+    [SerializeField] GameObject recIcon;
+    float timeSpentRec;
+    [SerializeField] AudioSource failCam;
+    [SerializeField] GameObject camNightVision;
+    [SerializeField] Slider batterySlider;
+    float batteryValue = 100;
+
+
+    [Header("Bools")]
     bool ladder = false;
     bool ladderClimb = false;
-    int walkState = 0;
-    [SerializeField] int jumpForce;
+    bool isActiveCam = false;
+    bool isActiveNightVision;
+
+
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
@@ -54,8 +88,9 @@ public class Player : MonoBehaviour
         if (ladderClimb == false)
         {
             Walk();
-            
+            CameraPaneManagment();
         }
+        batterySlider.value = batteryValue;
         RotCam();
         AnimationControl();
 
@@ -177,6 +212,65 @@ public class Player : MonoBehaviour
         }
         cameraXRot = Mathf.Clamp(cameraXRot, -45, 45);
         cam.transform.localEulerAngles = new Vector3(cameraXRot, 0, 0);
+    }
+    private void CameraPaneManagment()
+    {
+        if (Input.GetMouseButtonDown(1))
+        {
+            camPanel.SetActive(true);
+            isActiveCam = true;
+        }
+        if (isActiveCam)
+        {
+            timeSpentRec += Time.deltaTime;
+            if(timeSpentRec >= 0.5f && recIcon.activeInHierarchy)
+            {
+                recIcon.SetActive(false);
+                timeSpentRec = 0;
+            }
+            if(timeSpentRec >= 0.5f && !recIcon.activeInHierarchy)
+            {
+                recIcon.SetActive(true);
+                timeSpentRec = 0;
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.F) && isActiveCam)
+        {
+            camNightVision.SetActive(true);
+            if (!isActiveNightVision && batteryValue >= 2)
+            {
+                nightVisionSound.Play();
+            }
+            if(batteryValue < 2 && !isActiveNightVision)
+            {
+                failCam.Play();
+            }
+            isActiveNightVision = true;
+        }
+        if (isActiveNightVision)
+        {
+            camPanelIMG.color = nightVisionColor;
+            flashLight.SetActive(true);
+            timeSpent += Time.deltaTime;
+            if(timeSpent >= 3)
+            {
+                batteryValue -= 97;
+                timeSpent = 0;
+            }
+        }
+        else
+        {
+            camPanelIMG.color = regularVisionColor;
+            flashLight.SetActive(false);
+            camNightVision.SetActive(false);
+        }
+        if (batteryValue < 2)
+        {
+            flashLight.SetActive(false);
+            isActiveNightVision = false;
+            camNightVision.SetActive(false);
+            camPanelIMG.color = regularVisionColor;
+        }
     }
     private void OnTriggerEnter(Collider other)
     {
