@@ -10,7 +10,7 @@ public class Player : MonoBehaviour
     float mouseX;
     [SerializeField] Camera cam;
     Vector3 rotDir;
-    [SerializeField] int rotSpeed;
+    [SerializeField] float rotSpeed;
 
 
     [Header("Movement")]
@@ -55,6 +55,11 @@ public class Player : MonoBehaviour
     [Header("Canvas")]
     [SerializeField] TMP_Text tutorialText;
     [SerializeField] GameObject tutorialTextObject;
+    [SerializeField] Slider fovOptionValue;
+    [SerializeField] Slider imageGenValue;
+    [SerializeField] Slider mouseSensValue;
+    [SerializeField] GameObject pauseMenu;
+    [SerializeField] GameObject optionsMenu;
 
 
     void Start()
@@ -99,10 +104,42 @@ public class Player : MonoBehaviour
             Walk();
             CameraPlaneManagment();
         }
+        Options();
         batterySlider.value = batteryValue;
         RotCam();
         AnimationControl();
-
+        PauseMenu();
+    }
+    void PauseMenu()
+    {
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            pauseMenu.SetActive(true);
+            Cursor.lockState = CursorLockMode.None;
+            Time.timeScale = 0;
+        }
+    }
+    public void OpenOptions()
+    {
+        optionsMenu.SetActive(true);
+    }
+    public void CloseWindows()
+    {
+        optionsMenu.SetActive(false);
+        pauseMenu.SetActive(false);
+        Time.timeScale = 1;
+        Cursor.lockState = CursorLockMode.Locked;
+    }
+    public void CloseGame()
+    {
+        Application.Quit();
+        //UnityEditor.EditorApplication.isPlaying = false;
+    }
+    void Options()
+    {
+        cam.fieldOfView = fovOptionValue.value;
+        cam.farClipPlane = imageGenValue.value;
+        rotSpeed = mouseSensValue.value;
     }
     void AnimationControl()
     {
