@@ -1,4 +1,5 @@
 using System.Net;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -51,6 +52,10 @@ public class Player : MonoBehaviour
     bool isActiveNightVision;
     public bool isGrip = false;
 
+    [Header("Canvas")]
+    [SerializeField] TMP_Text tutorialText;
+    [SerializeField] GameObject tutorialTextObject;
+
 
     void Start()
     {
@@ -64,6 +69,8 @@ public class Player : MonoBehaviour
     {
         if (ladder == true)
         {
+            tutorialTextObject.SetActive(true);
+            tutorialText.text = "Press W to climb up\nPress S to jump off";
             if (Input.GetKey(KeyCode.W))
             {
                 ladderClimb = true;
@@ -79,6 +86,7 @@ public class Player : MonoBehaviour
             if (Input.GetKey(KeyCode.S))
             {
                 ladderClimb = false;
+                tutorialTextObject.SetActive(false);
                 animator.SetBool("Climb", false);
                 ladder = false;
                 rb.useGravity = true;
@@ -121,13 +129,17 @@ public class Player : MonoBehaviour
             animator.SetBool("Walk", false);
             animator.SetBool("CrouchWalk", false);
             animator.SetBool("Run", false);
+            tutorialTextObject.SetActive(true);
+            tutorialText.text = "Press T to climb up\nPress S to jump off";
             if (Input.GetKey(KeyCode.S))
             {
                 isGrip = false;
+                tutorialTextObject.SetActive(false);
             }
             if (Input.GetKey(KeyCode.T))
             {
                 animator.SetTrigger("Grip");
+                tutorialTextObject.SetActive(false);
             }
         }
     }
@@ -235,8 +247,14 @@ public class Player : MonoBehaviour
             camPanel.SetActive(true);
             isActiveCam = true;
         }
+        if (!isActiveCam)
+        {
+            tutorialTextObject.SetActive(false);
+        }
         if (isActiveCam)
         {
+            tutorialTextObject.SetActive(true);
+            tutorialText.text = "Press F to activate night vision";
             timeSpentRec += Time.deltaTime;
             if(timeSpentRec >= 0.5f && recIcon.activeInHierarchy)
             {
@@ -264,6 +282,14 @@ public class Player : MonoBehaviour
         }
         if (isActiveNightVision)
         {
+            if (batteryValue < 50)
+            {
+                tutorialText.text = "Go to the nearest \n recharge station to recharge your camcorder";
+            }
+            if (batteryValue > 50)
+            {
+                tutorialTextObject.SetActive(false);
+            }
             camPanelIMG.color = nightVisionColor;
             flashLight.SetActive(true);
             timeSpent += Time.deltaTime;
@@ -297,6 +323,7 @@ public class Player : MonoBehaviour
         {
             ladderClimb = false;
             ladder = false;
+            tutorialTextObject.SetActive(false);
             animator.SetBool("Climb", false);
             rb.useGravity = true;
             transform.position = other.transform.position;
