@@ -19,7 +19,7 @@ public class Player : MonoBehaviour
 
 
     [Header("Misc")]
-    Rigidbody rb;
+    public Rigidbody rb;
     [SerializeField] Vector3 scale;
 
 
@@ -49,6 +49,7 @@ public class Player : MonoBehaviour
     bool ladderClimb = false;
     bool isActiveCam = false;
     bool isActiveNightVision;
+    public bool isGrip = false;
 
 
     void Start()
@@ -85,10 +86,10 @@ public class Player : MonoBehaviour
             }
 
         }
-        if (ladderClimb == false)
+        if (ladderClimb == false && isGrip == false)
         {
             Walk();
-            CameraPaneManagment();
+            CameraPlaneManagment();
         }
         batterySlider.value = batteryValue;
         RotCam();
@@ -103,17 +104,31 @@ public class Player : MonoBehaviour
             animator.SetBool("CrouchWalk", false);
             animator.SetBool("Run", false);
         }
-        if (walkState == 1)
+        if (walkState == 1 && !isGrip)
         {
             animator.SetBool("Walk", true);
         }
-        if (walkState == 2)
+        if (walkState == 2 && !isGrip)
         {
             animator.SetBool("CrouchWalk", true);
         }
-        if (walkState == 3)
+        if (walkState == 3 && !isGrip)
         {
             animator.SetBool("Run", true);
+        }
+        if (isGrip)
+        {
+            animator.SetBool("Walk", false);
+            animator.SetBool("CrouchWalk", false);
+            animator.SetBool("Run", false);
+            if (Input.GetKey(KeyCode.S))
+            {
+                isGrip = false;
+            }
+            if (Input.GetKey(KeyCode.T))
+            {
+                animator.SetTrigger("Grip");
+            }
         }
     }
     void Walk() 
@@ -213,7 +228,7 @@ public class Player : MonoBehaviour
         cameraXRot = Mathf.Clamp(cameraXRot, -45, 45);
         cam.transform.localEulerAngles = new Vector3(cameraXRot, 0, 0);
     }
-    private void CameraPaneManagment()
+    private void CameraPlaneManagment()
     {
         if (Input.GetMouseButtonDown(1))
         {
@@ -254,7 +269,7 @@ public class Player : MonoBehaviour
             timeSpent += Time.deltaTime;
             if(timeSpent >= 3)
             {
-                batteryValue -= 97;
+                batteryValue -= 2;
                 timeSpent = 0;
             }
         }
@@ -288,8 +303,10 @@ public class Player : MonoBehaviour
         }
         if (other.CompareTag("Griip"))
         {
-            //animator.SetTrigger("Grip");
-        }
+            isGrip = true;
+            rb.useGravity = false;
+            walkState = 0;
+        } 
     }
     private void OnTriggerExit(Collider other)
     {
