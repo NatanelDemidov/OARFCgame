@@ -61,6 +61,10 @@ public class Player : MonoBehaviour
     [SerializeField] GameObject pauseMenu;
     [SerializeField] GameObject optionsMenu;
 
+    [Header("Optimazation")]
+    [SerializeField] GameObject start;
+    [SerializeField] GameObject intro;
+
 
     void Start()
     {
@@ -370,7 +374,12 @@ public class Player : MonoBehaviour
             isGrip = true;
             rb.useGravity = false;
             walkState = 0;
-        } 
+        }
+        if (other.CompareTag("EnterAsylum"))
+        {
+            Destroy(start);
+            Destroy(intro);
+        }
     }
     private void OnTriggerExit(Collider other)
     {
@@ -379,6 +388,11 @@ public class Player : MonoBehaviour
             ladderClimb = false;
             animator.SetBool("Climb", false);
             ladder = false;
+            rb.useGravity = true;
+        }
+        if (other.CompareTag("Griip"))
+        {
+            isGrip = false;
             rb.useGravity = true;
         }
     }
