@@ -15,7 +15,8 @@ public class Player : MonoBehaviour
 
     [Header("Movement")]
     Vector3 dir;
-    [SerializeField] int speed = 20;
+    [SerializeField] float speed;
+    float startSpeed;
     [SerializeField] int jumpForce;
 
 
@@ -64,6 +65,8 @@ public class Player : MonoBehaviour
     [Header("Optimazation")]
     [SerializeField] GameObject start;
     [SerializeField] GameObject intro;
+    [SerializeField] GameObject entranceAsylum;
+    [SerializeField] GameObject asylum;
 
 
     void Start()
@@ -71,6 +74,7 @@ public class Player : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
+        startSpeed = speed;
     }
 
     
@@ -223,24 +227,24 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.LeftControl))
         {
             transform.localScale = new Vector3(scale.x/2,scale.y/2,scale.z/2);
-            speed = 20;
+            speed = startSpeed/2;
             walkState = 2;
         }
         if (Input.GetKeyUp(KeyCode.LeftControl))
         {
             transform.Translate(0,25,0);
             transform.localScale = new Vector3(scale.x, scale.y, scale.z);
-            speed = 40;
+            speed = startSpeed;
             walkState = 0;
         }
         if (Input.GetKeyDown(KeyCode.LeftShift) && transform.localScale.x != 2.5f)
         {
-            speed = 100;
+            speed = startSpeed*2.5f;
             walkState = 3;
         }
         if (Input.GetKeyUp(KeyCode.LeftShift))
         {
-            speed = 40;
+            speed = startSpeed;
             walkState = 0;
         }
         if (Input.GetKeyDown(KeyCode.Space) && transform.localScale.x != 2.5f)
@@ -379,6 +383,7 @@ public class Player : MonoBehaviour
         {
             Destroy(start);
             Destroy(intro);
+            asylum.SetActive(true);
         }
     }
     private void OnTriggerExit(Collider other)
