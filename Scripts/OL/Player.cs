@@ -289,13 +289,19 @@ public class Player : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(1))
         {
-            camPanel.SetActive(true);
-            isActiveCam = true;
+            if (isActiveCam)
+            {
+                camPanel.SetActive(false);
+                isActiveCam = false;
+            }
+            else 
+            {
+                camPanel.SetActive(true);
+                isActiveCam = true;
+            }
+            
         }
-        if (!isActiveCam)
-        {
-            tutorialTextObject.SetActive(false);
-        }
+        if(!isActiveCam)
         if (isActiveCam)
         {
             tutorialTextObject.SetActive(true);
@@ -325,13 +331,13 @@ public class Player : MonoBehaviour
             }
             isActiveNightVision = true;
         }
-        if (isActiveNightVision)
+        if (isActiveNightVision && isActiveCam)
         {
-            if (batteryValue < 50)
+            if (batteryValue < 2)
             {
                 tutorialText.text = "Go to the nearest \n recharge station to recharge your camcorder";
             }
-            if (batteryValue > 50)
+            if (batteryValue > 2)
             {
                 tutorialTextObject.SetActive(false);
             }
