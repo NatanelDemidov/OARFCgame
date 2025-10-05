@@ -17,6 +17,9 @@ public class Player : MonoBehaviour
     [SerializeField] float speed;
     float startSpeed;
     [SerializeField] int jumpForce;
+    [SerializeField] Transform legs;
+    [SerializeField] float radiusSphere;
+    [SerializeField] LayerMask groundMask;
 
 
     [Header("Misc")]
@@ -35,6 +38,7 @@ public class Player : MonoBehaviour
     bool ladder = false;
     bool ladderClimb = false;
     public bool isGrip = false;
+    bool isOnGround = false;
 
     [Header("Canvas")]
     [SerializeField] TMP_Text tutorialText;
@@ -90,6 +94,7 @@ public class Player : MonoBehaviour
             Walk();
             camControl.CameraPlaneManagment();
         }
+        isOnGround = Physics.CheckSphere(legs.position, radiusSphere, groundMask);
         pauseMenuControl.Options();
         RotCam();
         AnimationControl();
@@ -194,7 +199,7 @@ public class Player : MonoBehaviour
             speed = startSpeed;
             walkState = 0;
         }
-        if (Input.GetKeyDown(KeyCode.Space) && transform.localScale.x != 2.5f)
+        if (Input.GetKeyDown(KeyCode.Space) && transform.localScale.x != 2.5f && isOnGround)
         {
             rb.AddForce(Vector3.up * jumpForce,ForceMode.Impulse);
             //animator.SetTrigger("Jump");
