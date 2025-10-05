@@ -10,8 +10,7 @@ public class Player : MonoBehaviour
     float mouseX;
     [SerializeField] Camera cam;
     Vector3 rotDir;
-    [SerializeField] float rotSpeed;
-
+    public float rotSpeed;
 
     [Header("Movement")]
     Vector3 dir;
@@ -24,43 +23,22 @@ public class Player : MonoBehaviour
     public Rigidbody rb;
     [SerializeField] Vector3 scale;
 
+    [Header("Scripts")]
+    [SerializeField] CamControl camControl;
+    [SerializeField] PauseMenu pauseMenuControl;
 
     [Header("Animation")]
     Animator animator;
     int walkState = 0;
 
-
-    [Header("Camcorder")]
-    [SerializeField] GameObject flashLight;
-    [SerializeField] AudioSource nightVisionSound;
-    float timeSpent;
-    [SerializeField] GameObject camPanel;
-    [SerializeField] Image camPanelIMG;
-    [SerializeField] Color nightVisionColor;
-    [SerializeField] Color regularVisionColor;
-    [SerializeField] GameObject recIcon;
-    float timeSpentRec;
-    [SerializeField] AudioSource failCam;
-    [SerializeField] GameObject camNightVision;
-    [SerializeField] Slider batterySlider;
-    float batteryValue = 100;
-
-
     [Header("Bools")]
     bool ladder = false;
     bool ladderClimb = false;
-    bool isActiveCam = false;
-    bool isActiveNightVision;
     public bool isGrip = false;
 
     [Header("Canvas")]
     [SerializeField] TMP_Text tutorialText;
     [SerializeField] GameObject tutorialTextObject;
-    [SerializeField] Slider fovOptionValue;
-    [SerializeField] Slider imageGenValue;
-    [SerializeField] Slider mouseSensValue;
-    [SerializeField] GameObject pauseMenu;
-    [SerializeField] GameObject optionsMenu;
 
     [Header("Optimazation")]
     [SerializeField] GameObject start;
@@ -110,45 +88,14 @@ public class Player : MonoBehaviour
         if (ladderClimb == false && isGrip == false)
         {
             Walk();
-            CameraPlaneManagment();
+            camControl.CameraPlaneManagment();
         }
-        Options();
-        batterySlider.value = batteryValue;
+        pauseMenuControl.Options();
         RotCam();
         AnimationControl();
-        PauseMenu();
+        pauseMenuControl.PauseMenuControl();
     }
-    void PauseMenu()
-    {
-        if (Input.GetKey(KeyCode.Escape))
-        {
-            pauseMenu.SetActive(true);
-            Cursor.lockState = CursorLockMode.None;
-            Time.timeScale = 0;
-        }
-    }
-    public void OpenOptions()
-    {
-        optionsMenu.SetActive(true);
-    }
-    public void CloseWindows()
-    {
-        optionsMenu.SetActive(false);
-        pauseMenu.SetActive(false);
-        Time.timeScale = 1;
-        Cursor.lockState = CursorLockMode.Locked;
-    }
-    public void CloseGame()
-    {
-        Application.Quit();
-        //UnityEditor.EditorApplication.isPlaying = false;
-    }
-    void Options()
-    {
-        cam.fieldOfView = fovOptionValue.value;
-        cam.farClipPlane = imageGenValue.value;
-        rotSpeed = mouseSensValue.value;
-    }
+    
     void AnimationControl()
     {
         if (walkState == 0)
@@ -285,85 +232,7 @@ public class Player : MonoBehaviour
         cameraXRot = Mathf.Clamp(cameraXRot, -45, 45);
         cam.transform.localEulerAngles = new Vector3(cameraXRot, 0, 0);
     }
-    private void CameraPlaneManagment()
-    {
-        if (Input.GetMouseButtonDown(1))
-        {
-            if (isActiveCam)
-            {
-                camPanel.SetActive(false);
-                isActiveCam = false;
-            }
-            else 
-            {
-                camPanel.SetActive(true);
-                isActiveCam = true;
-            }
-            
-        }
-        if(!isActiveCam)
-        if (isActiveCam)
-        {
-            tutorialTextObject.SetActive(true);
-            tutorialText.text = "Press F to activate night vision";
-            timeSpentRec += Time.deltaTime;
-            if(timeSpentRec >= 0.5f && recIcon.activeInHierarchy)
-            {
-                recIcon.SetActive(false);
-                timeSpentRec = 0;
-            }
-            if(timeSpentRec >= 0.5f && !recIcon.activeInHierarchy)
-            {
-                recIcon.SetActive(true);
-                timeSpentRec = 0;
-            }
-        }
-        if (Input.GetKeyDown(KeyCode.F) && isActiveCam)
-        {
-            camNightVision.SetActive(true);
-            if (!isActiveNightVision && batteryValue >= 2)
-            {
-                nightVisionSound.Play();
-            }
-            if(batteryValue < 2 && !isActiveNightVision)
-            {
-                failCam.Play();
-            }
-            isActiveNightVision = true;
-        }
-        if (isActiveNightVision && isActiveCam)
-        {
-            if (batteryValue < 2)
-            {
-                tutorialText.text = "Go to the nearest \n recharge station to recharge your camcorder";
-            }
-            if (batteryValue > 2)
-            {
-                tutorialTextObject.SetActive(false);
-            }
-            camPanelIMG.color = nightVisionColor;
-            flashLight.SetActive(true);
-            timeSpent += Time.deltaTime;
-            if(timeSpent >= 3)
-            {
-                batteryValue -= 2;
-                timeSpent = 0;
-            }
-        }
-        else
-        {
-            camPanelIMG.color = regularVisionColor;
-            flashLight.SetActive(false);
-            camNightVision.SetActive(false);
-        }
-        if (batteryValue < 2)
-        {
-            flashLight.SetActive(false);
-            isActiveNightVision = false;
-            camNightVision.SetActive(false);
-            camPanelIMG.color = regularVisionColor;
-        }
-    }
+   
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Ladder"))
