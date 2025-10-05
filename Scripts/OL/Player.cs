@@ -178,16 +178,20 @@ public class Player : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.LeftControl))
         {
-            transform.localScale = new Vector3(scale.x/2,scale.y/2,scale.z/2);
-            speed = startSpeed/2;
-            walkState = 2;
-        }
-        if (Input.GetKeyUp(KeyCode.LeftControl))
-        {
-            transform.Translate(0,25,0);
-            transform.localScale = new Vector3(scale.x, scale.y, scale.z);
-            speed = startSpeed;
-            walkState = 0;
+            if(transform.localScale.x != 2.5)
+            {
+                transform.localScale = new Vector3(scale.x / 2, scale.y / 2, scale.z / 2);
+                speed = startSpeed / 2;
+                walkState = 2;
+            }
+            else if(transform.localScale.x == 2.5)
+            {
+                transform.Translate(0, 15*Time.deltaTime, 0);
+                transform.localScale = new Vector3(scale.x, scale.y, scale.z);
+                speed = startSpeed;
+                walkState = 0;
+            }
+            
         }
         if (Input.GetKeyDown(KeyCode.LeftShift) && transform.localScale.x != 2.5f)
         {
