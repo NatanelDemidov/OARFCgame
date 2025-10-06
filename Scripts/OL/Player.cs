@@ -39,6 +39,7 @@ public class Player : MonoBehaviour
     bool ladderClimb = false;
     public bool isGrip = false;
     bool isOnGround = false;
+    bool isRunning = false;
 
     [Header("Canvas")]
     [SerializeField] TMP_Text tutorialText;
@@ -150,6 +151,8 @@ public class Player : MonoBehaviour
         }if (Input.GetKeyUp(KeyCode.W))
         {
             walkState = 0;
+            speed = startSpeed;
+            isRunning = false;
         }
         if (Input.GetKey(KeyCode.S))
         {
@@ -195,13 +198,18 @@ public class Player : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.LeftShift) && transform.localScale.x != 2.5f)
         {
-            speed = startSpeed*2.5f;
-            walkState = 3;
-        }
-        if (Input.GetKeyUp(KeyCode.LeftShift))
-        {
-            speed = startSpeed;
-            walkState = 0;
+            if (isRunning)
+            {
+                speed = startSpeed;
+                isRunning = false;
+                walkState = 0;
+            }
+            else 
+            {
+                speed = startSpeed * 2.5f;
+                isRunning = true;
+                walkState = 3;
+            }
         }
         if (Input.GetKeyDown(KeyCode.Space) && transform.localScale.x != 2.5f && isOnGround)
         {

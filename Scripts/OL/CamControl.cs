@@ -14,6 +14,7 @@ public class CamControl : MonoBehaviour
     [SerializeField] Color nightVisionColor;
     [SerializeField] Color regularVisionColor;
     [SerializeField] GameObject recIcon;
+    [SerializeField] GameObject dust;
     float timeSpentRec;
     [SerializeField] AudioSource failCam;
     [SerializeField] GameObject camNightVision;
@@ -65,10 +66,12 @@ public class CamControl : MonoBehaviour
             if (isActiveNightVision)
             {
                 camNightVision.SetActive(false);
+                dust.SetActive(false);
                 isActiveNightVision = false;
             }
             else
             {
+                dust.SetActive(true);
                 camNightVision.SetActive(true);
                 isActiveNightVision = true;
                 if (!isActiveNightVision && batteryValue >= 2)
@@ -110,6 +113,7 @@ public class CamControl : MonoBehaviour
         {
             flashLight.SetActive(false);
             isActiveNightVision = false;
+            dust.SetActive(false);
             camNightVision.SetActive(false);
             camPanelIMG.color = regularVisionColor;
         }
