@@ -34,6 +34,7 @@ public class CamControl : MonoBehaviour
         {
             if (isActiveCam)
             {
+                dust.SetActive(false);
                 camPanel.SetActive(false);
                 isActiveCam = false;
             }
