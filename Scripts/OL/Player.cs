@@ -25,6 +25,7 @@ public class Player : MonoBehaviour
     [Header("Misc")]
     public Rigidbody rb;
     [SerializeField] Vector3 scale;
+    [SerializeField] Transform maleAsylumEnter;
 
     [Header("Scripts")]
     [SerializeField] CamControl camControl;
@@ -50,6 +51,7 @@ public class Player : MonoBehaviour
     [SerializeField] GameObject intro;
     [SerializeField] GameObject entranceAsylum;
     [SerializeField] GameObject asylum;
+    [SerializeField] GameObject maleAsylum;
 
 
     void Start()
@@ -94,6 +96,10 @@ public class Player : MonoBehaviour
         {
             Walk();
             camControl.CameraPlaneManagment();
+            if(!isRunning && transform.localScale.x != 2.5)
+            {
+                speed = startSpeed;
+            }
         }
         isOnGround = Physics.CheckSphere(legs.position, radiusSphere, groundMask);
         pauseMenuControl.Options();
@@ -151,14 +157,12 @@ public class Player : MonoBehaviour
         }if (Input.GetKeyUp(KeyCode.W))
         {
             walkState = 0;
-            speed = startSpeed;
             isRunning = false;
         }
         if (Input.GetKey(KeyCode.S))
         {
             dir.z = -1;
             walkState = 1;
-            speed = startSpeed;
             isRunning = false;
         }
         if (Input.GetKeyUp(KeyCode.S))
@@ -172,7 +176,6 @@ public class Player : MonoBehaviour
         }if (Input.GetKeyUp(KeyCode.D))
         {
             walkState = 0;
-            speed = startSpeed;
             isRunning = false;
         }
         if (Input.GetKey(KeyCode.A))
@@ -182,7 +185,6 @@ public class Player : MonoBehaviour
         }if (Input.GetKeyUp(KeyCode.A))
         {
             walkState = 0;
-            speed = startSpeed;
             isRunning = false;
         }
         if (Input.GetKeyDown(KeyCode.LeftControl))
@@ -282,6 +284,13 @@ public class Player : MonoBehaviour
             Destroy(start);
             Destroy(intro);
             asylum.SetActive(true);
+        }
+        if (other.CompareTag("EnterMaleWard"))
+        {
+            Destroy(entranceAsylum);
+            Destroy(asylum);
+            maleAsylum.SetActive(true);
+            transform.position = maleAsylumEnter.position;
         }
     }
     private void OnTriggerExit(Collider other)

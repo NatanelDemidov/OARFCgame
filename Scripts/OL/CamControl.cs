@@ -45,23 +45,21 @@ public class CamControl : MonoBehaviour
             }
 
         }
-        if (!isActiveCam)
-            if (isActiveCam)
-            {
-                tutorialTextObject.SetActive(true);
-                tutorialText.text = "Press F to activate night vision";
-                timeSpentRec += Time.deltaTime;
-                if (timeSpentRec >= 0.5f && recIcon.activeInHierarchy)
-                {
-                    recIcon.SetActive(false);
-                    timeSpentRec = 0;
-                }
-                if (timeSpentRec >= 0.5f && !recIcon.activeInHierarchy)
-                {
-                    recIcon.SetActive(true);
-                    timeSpentRec = 0;
-                }
-            }
+         if (isActiveCam)
+         {
+             timeSpentRec += Time.deltaTime;
+             if (timeSpentRec >= 0.5f && recIcon.activeInHierarchy)
+             {
+                 recIcon.SetActive(false);
+                 timeSpentRec = 0;
+             }
+             if (timeSpentRec >= 0.5f && !recIcon.activeInHierarchy)
+             {
+                 recIcon.SetActive(true);
+                 timeSpentRec = 0;
+
+             }
+         }
         if (Input.GetKeyDown(KeyCode.F) && isActiveCam)
         {
             if (isActiveNightVision)
@@ -87,10 +85,6 @@ public class CamControl : MonoBehaviour
         }
         if (isActiveNightVision && isActiveCam)
         {
-            if (batteryValue < 2)
-            {
-                tutorialText.text = "Go to the nearest \n recharge station to recharge your camcorder";
-            }
             if (batteryValue > 2)
             {
                 tutorialTextObject.SetActive(false);
