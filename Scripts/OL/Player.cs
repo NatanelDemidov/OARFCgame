@@ -158,6 +158,8 @@ public class Player : MonoBehaviour
         {
             dir.z = -1;
             walkState = 1;
+            speed = startSpeed;
+            isRunning = false;
         }
         if (Input.GetKeyUp(KeyCode.S))
         {
@@ -170,14 +172,18 @@ public class Player : MonoBehaviour
         }if (Input.GetKeyUp(KeyCode.D))
         {
             walkState = 0;
+            speed = startSpeed;
+            isRunning = false;
         }
         if (Input.GetKey(KeyCode.A))
         {
             dir.x = -1;
             walkState = 1;
-        }if (Input.GetKeyDown(KeyCode.A))
+        }if (Input.GetKeyUp(KeyCode.A))
         {
             walkState = 0;
+            speed = startSpeed;
+            isRunning = false;
         }
         if (Input.GetKeyDown(KeyCode.LeftControl))
         {
